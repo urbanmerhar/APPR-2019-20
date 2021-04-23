@@ -1,0 +1,619 @@
+---
+title: "Poročilo pri predmetu Analiza podatkov s programom R"
+author: "Urban Merhar"
+output:
+  html_document: default
+  pdf_document:
+    includes:
+      in_header: lib/styles.sty
+    latex_engine: xelatex
+runtime: shiny
+---
+
+```{r setup, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+# Če želimo nastaviti pisave v PDF-ju, odkomentiramo
+# in sledimo navodilom v programu.
+#source("fontconfig.r", encoding="UTF-8")
+
+# Uvoz vseh potrebnih knjižnic
+source("lib/libraries.r", encoding="UTF-8")
+```
+
+```{r rstudio, echo=FALSE, results='asis'}
+# Izris povezave do RStudia na Binderju
+source("lib/rstudio.r", encoding="UTF-8")
+```
+
+# Izbira teme
+
+Namen projektne naloge je učenje programskega jezika *R* pri predmetu *Analiza podatkov s programom R*. V projektni nalogi si bomo pogledali prebivalstvo v Republiki Sloveniji. Ukvarjali se bomo z državljanstvi in starostno strukturo prebivalstva Slovenije.
+
+![](slike/grb.png)
+
+***
+
+# Obdelava, uvoz in čiščenje podatkov
+
+```{r uvoz, echo=FALSE, message=FALSE}
+source("uvoz/uvoz_moj.r", encoding="UTF-8")
+```
+
+Uvozili smo podatke o prebivalstvu v Sloveniji. Gre za podatke o državljanstvu prebivalcev. Podatki so bili pridobljeni od Statističnega urada Republike Slovenije (SURS). Surovi podatki so v obliki CSV, ki smo jih spremenili v *tidy data* obliko.
+
+1. `prebivalstvo` - podatki o prebivalstvu
+  - `spol` - spremenljivka: podatki o spolu,
+  - `drzavljanstvo` - spremenljivka: državljanstvo,
+  - `leto` - spremenljivka: leto meritve,
+  - `starost` - spremenljivka: interval starostne skupine,
+  - `stevilo` - meritev: število oseb določenega spola, državljanstva in starosti, ki so živeli v Republiki Sloveniji v letu meritve
+  
+Vzorec surovih podatkov je prikazan v spodnji tabeli.
+```{r podatki surovi, echo=FALSE, message=FALSE}
+renderTable({prebivalstvo.surovi.podatki[1:10, 1:11]})
+```
+
+Te podatke smo nato očistili in spremenili v *tidy data* obliko. Vzorec končne tabele podatkov je prikazan spodaj.
+
+```{r podatki, echo=FALSE, message=FALSE}
+renderTable({prebivalstvo[1:10,]})
+```
+
+Za hitro predstavitev prebivalstva si lahko pogledamo tortni diagram, ki prikazuje deleže državljanstev v Republiki Sloveniji. Če na drsniku spreminjamo leto lahko opazimo, da se delež tujih državljancev veča.
+
+```{r analiza, echo=FALSE, message=FALSE}
+source("analiza/analiza_moj.r", encoding="UTF-8")
+```
+
+```{r pie2, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Porazdelitev državljanstva'}
+
+inputPanel(
+  sliderInput("sliderletopie", label = "Leto:",
+              min = 2011, max = 2019, value = 2011, step = 1, sep = "")
+)
+renderPlot({
+  pie((slo.ostali %>% filter(leto == input$sliderleto))$stevilo,
+      labels = slo.ostali$drzavljanstvo,
+      col = c("darkred", "darkgreen"),
+      main ="Delež državljanstva")
+})
+```
+
+Boljšo predstavo dobimo, če *Ostalo* razbijemo na več skupin, naprimer na *Evropsko*, *Evropsko brez Evropske Unije* in *Ostalo*.
+
+```{r pie3, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Porazdelitev državljanstva podrobno'}
+
+inputPanel(
+  sliderInput("sliderleto", label = "Leto:",
+              min = 2011, max = 2019, value = 2011, step = 1, sep = "")
+)
+
+renderPlot({
+  pie((tabela.eu.slovenija.preostalaevropa.ostalo %>% filter(leto == input$sliderletopie))$stevilo,
+      labels = tabela.eu.slovenija.preostalaevropa.ostalo$drzavljanstvo,
+      main = "Državljanstva")
+})
+```
+
+Zanimivo je pogledati razporeditev najpogostejših tujih državljanov v Sloveniji tako, da izvzamemo Slovenske državljane in dobimo predstavo katerih tujih državljanov je v Sloveniji največ.
+
+```{r pie, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Porazdelitev tujih državljanov v Sloveniji'}
+
+renderPlot({
+  pie((razbitje.ostali %>% filter(leto == input$sliderletopie))$skupaj,
+      labels = (razbitje.ostali %>% filter(leto == input$sliderleto))$drzavljanstvo,
+      main = " Razporeditev prebivalcev brez Slovenskega državljanstva")
+})
+```
+
+Iz tortnih diagramov je očitno, da je velika večina tujih državljanov iz balkana. Najbolj zanimivo pa je morda to, da je med 10 največjimi skupinami tujih državljanov tudi Kitajska.
+
+***
+
+# Analiza in vizualizacija podatkov
+
+V prvem delu projekta smo si na hitro pogledali porazdelitev državljanstev prebivalstva v Sloveniji s pomočjo tortnih diagramov. Sedaj si poglejmo same podatke in še nekaj zanimivih predstavitev ter stvari, ki jih lahko opazimo.
+
+## Prebivalstvo
+
+Najprej si poglejmo graf, ki prikazuje nominalne vrednosti števila prebivalcev v Republiki Sloveniji.
+```{r graf1, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Število VSI'}
+
+plot(x = 2011:2019,
+      y = prebivalstvo.nom.spola.skupaj.vsi,
+      type= "b",
+      lwd = "2",
+      pch = 16,
+      col = 'lightblue',
+      xlab= "Leto",
+      ylab= "Število državljanov",
+      main= "Število prebivalcev v Sloveniji"
+)
+```
+
+Zanimivo si je pogledati, kaj se zgodi, če na isti graf narišemo krivuljo vseh prebivalcev skupaj in vseh prebivalcev, ki imajo slovensko državljanstvo.
+
+```{r graf2, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Število slo'}
+
+plot(x = 2011:2019,
+     y = (prebivalstvo.nom.spola.skupaj %>% filter(drzavljanstvo == "Slovenija"))[1,][c(2:10)],
+     ylim=range(1940000, 2100000),
+     type= "b",
+     lwd = "2",
+     pch = 16,
+     col = 'lightblue',
+     xlab= "Leto",
+     ylab= "Število državljanov",
+     main= "Število državljanov kombinacija"
+)
+
+lines(x = 2011:2019,
+      y = prebivalstvo.nom.spola.skupaj.vsi,
+      type= "b",
+      lwd = "2",
+      pch = 16,
+      col = 'red',
+      xlab= "Leto",)
+
+legend("topleft",
+       title="Državljanstvo",
+       legend = c("Slovensko", "Skupaj"),
+       col = c("lightblue", "red"),
+       lwd = "2",
+       cex = 0.8)
+```
+
+Graf ločenih slovencev in slovenk.
+
+```{r graf3, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Moski, zenske'}
+
+plot(x = 2011:2019,
+     y = (prebivalstvo.nom %>% filter(spol == "Moški", drzavljanstvo == "Slovenija"))[1,][c(3:11)],
+     ylim=range(940000, 1020000),
+     type= "b",
+     lwd = "2",
+     pch = 16,
+     col = 'lightblue',
+     xlab= "Leto",
+     ylab= "Število državljanov",
+     main= "Število prebivalcev in prebivalk s slovenskim državljanstvom"
+     )
+
+lines(x = 2011:2019,
+      y = (prebivalstvo.nom %>% filter(spol == "Ženske", drzavljanstvo == "Slovenija"))[1,][c(3:11)],
+      type= "b",
+      lwd = "2",
+      pch = 16,
+      col = 'lightcoral'
+      )
+
+
+legend("left",
+       title="Spol",
+       legend = c("Moški", "Ženske"),
+       col = c("lightblue", "lightcoral"),
+       lwd = "2",
+       cex=0.8)
+```
+
+Podobno si poglejmo še za tiste s tujim državljanstvom.
+
+```{r graf4, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Moski, zenske'}
+
+plot(x = 2011:2019,
+     y = (prebivalstvo.nom.tujci.spola %>% filter(spol == "Moški"))[2:10],
+     ylim=range(24000, 91000),
+     type= "b",
+     lwd = "2",
+     pch = 16,
+     col = 'lightblue',
+     xlab= "Leto",
+     ylab= "Število",
+     main= "Število prebivalcev in prebivalk s tujim državljanstvom "
+)
+
+lines(x = 2011:2019,
+      y = (prebivalstvo.nom.tujci.spola %>% filter(spol == "Ženske"))[2:10],
+      type= "b",
+      lwd = "2",
+      pch = 16,
+      col = 'lightcoral',
+      xlab= "Leto",)
+
+legend("topleft",
+       title="Spol",
+       legend = c("Moški", "Ženske"),
+       col = c("lightblue", "lightcoral"),
+       lwd = "2",
+       cex=0.8)
+```
+
+## Spremembe glede na leto 2011
+
+Delež celotnega prebivalstva glede na 2011.
+
+```{r graf5, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Real vsi'}
+# y = vsota vseh prebivalcev
+plot(x = 2011:2019,
+     y = (prebivalstvo.real %>%
+         group_by(leto) %>%
+         summarise_at(vars(delez), list(stevilo = sum)))$stevilo,
+     type= "b",
+     lwd = "2",
+     pch = 16,
+     col = 'lightblue',
+     xlab= "Leto",
+     ylab= "",
+     las = 1,
+     main = "Delež prebivalstva glede na leto 2011"
+     )
+```
+
+Delež prebivalstva ločen po spolu.
+
+```{r graf6, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Real po spolu'}
+# y = vsota vseh prebivalcev, ločeni po spolu
+plot(x = 2011:2019,
+     y = (prebivalstvo.real %>%
+            group_by(spol, leto) %>%
+            summarise_at(vars(delez), list(stevilo = sum)) %>%
+            filter(spol == "Moški"))$stevilo,
+     ylim=range(0.49, 0.51),
+     type= "b",
+     lwd = "2",
+     pch = 16,
+     col = 'lightblue',
+     xlab= "Leto",
+     ylab= "",
+     las = 1,
+     main = "Delež prebivalstva ločen po spolu"
+    )
+
+lines(x = 2011:2019,
+      y = (prebivalstvo.real %>%
+             group_by(spol, leto) %>%
+             summarise_at(vars(delez), list(stevilo = sum)) %>%
+             filter(spol == "Ženske"))$stevilo,
+      type= "b",
+      lwd = "2",
+      pch = 16,
+      col = 'lightcoral'
+     )
+
+legend("bottomright",
+       title="Spol",
+       legend = c("Moški", "Ženske"),
+       col = c("lightblue", "lightcoral"),
+       lwd = "2",
+       cex=0.8)
+
+```
+
+Delež prebivalstva s slovenskim državljanstvom glede na 2011
+
+```{r graf7, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Real samo slo'}
+# y = vsota prebivalcev z slovenskim državljanstvom
+plot(x = 2011:2019,
+     y = (prebivalstvo.real %>%
+       group_by(leto, `drzavljanstvo == "Slovenija"`) %>%
+       summarise_at(vars(delez), list(stevilo = sum)) %>%
+         filter(`drzavljanstvo == "Slovenija"` == TRUE))$stevilo,
+     type= "b",
+     lwd = "2",
+     pch = 16,
+     col = 'lightblue',
+     xlab= "Leto",
+     ylab= "",
+     las = 1,
+     main = "Delež prebivalstva s slovenskim državljanstvom, glede na leto 2011"
+    )
+```
+
+Delež prebivalstva s tujim državljanstvom, glede na leto 2011
+
+```{r graf8, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Real samo tujci'}
+# y = vsota tujcev
+plot(x = 2011:2019,
+     y = (prebivalstvo.real %>%
+            group_by(leto, `drzavljanstvo == "Slovenija"`) %>%
+            summarise_at(vars(delez), list(stevilo = sum)) %>%
+            filter(`drzavljanstvo == "Slovenija"` == FALSE))$stevilo,
+     type= "b",
+     lwd = "2",
+     pch = 16,
+     col = 'lightblue',
+     xlab= "Leto",
+     ylab= "",
+     las = 1,
+     main = "Delež prebivalstva s tujim državljanstvom, glede na leto 2011"
+)
+```
+
+## Starostna piramida prebivalstva
+
+Glede na pogostost govorjenja o staranju prebivalstva na stari celini, si poglejmo kaj o tem pravijo podatki o prebivalstvu v Republiki Sloveniji. Torej oglejmo si porazdelitev starostne strukture. Uporabimo vse podatke, ki pa so filtrirani le na leto meritve.
+
+```{r starostna_porazdelitev_vsi, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Starostna porazdelitev prebivalstva'}
+
+inputPanel(
+  sliderInput("sliderletopiramida", label = "Leto:",
+              min = 2011, max = 2019, value = 2011, step = 1, sep = "")
+)
+
+renderPlot({
+  prebivalstvo.skupaj <- prebivalstvo %>% 
+                         group_by(spol, leto, starost) %>%
+                         summarise_at(vars(stevilo), list(stevilo = sum)) %>%
+                         slice(match(c("0-4 let", "5-9 let", "10-14 let", "15-19 let", "20-24 let", "25-29 let", "30-34 let", 
+                                       "35-39 let", "40-44 let", "45-49 let", "50-54 let", "55-59 let", "60-64 let", "65-69 let",
+                                       "70-74 let", "75-79 let", "80-84 let", "85-89 let", "90 + let"), starost)) %>%
+                         filter(leto == input$sliderletopiramida)
+  
+  prebivalstvoBAR <- rbind((prebivalstvo.skupaj %>% filter(spol == "Moški"))$stevilo,
+                           (prebivalstvo.skupaj %>% filter(spol == "Ženske"))$stevilo)
+  #moški
+  barplot(100 * prebivalstvoBAR[1,]/sum(prebivalstvoBAR),
+          horiz=TRUE,
+          xlim = c(-5, 5),
+          col = "lightblue",
+          main = "Porazdelitev prebivalcev po starosti (VSI)",
+          xlab = "Število prebivalcev",
+          las=1,
+          xaxt="n",
+          names.arg = prebivalstvo.skupaj$starost[1:19])
+  #ženske
+  barplot(100 * (-prebivalstvoBAR[2,]/sum(prebivalstvoBAR)),
+          add=TRUE,
+          horiz=TRUE,
+          col = "lightcoral",
+          las=1,
+          xaxt="n",
+          names.arg = prebivalstvo.skupaj$starost[1:19])
+  
+  # ker je xlim nastavljena na [-5,5] se umetno nastavljena axis ujema
+  axis(1, at=(-5):5, labels=FALSE, tck=.02)
+  mtext(paste0(c(5:1, 0:5), "%"), side = 1, 1, at=(-5):5, las=1)
+})
+```
+
+Vidimo, da tako imenovana starostna piramida, ko analiziramo podatke o prebivalstvu v Sloveniji ni ravno podobna piramidi. Na grafu lahko opazimo tudi razliko o pričakovani življenski dobi med moškimi in ženskami.
+
+Poglejmo si podoben graf, v katerem pa opazujemo samo osebe s Slovenskim državljanstvom. Glede na to, da smo pri tortnih diagramih pokazali, da ima velika večina prebivalstva slovensko državljanstvo pričakujemo, da bo starostna piramida podobna prejšnji.
+
+```{r starostna_porazdelitev_slo, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Starostna porazdelitev prebivalstva, samo slovenski državljani'}
+renderPlot({
+  slo.moski <- prebivalstvo %>% filter(drzavljanstvo == "Slovenija") %>% filter(spol == "Moški") %>%
+               filter(leto == input$sliderletopiramida)
+  slo.zenske <- prebivalstvo %>% filter(drzavljanstvo == "Slovenija") %>% filter(spol == "Ženske") %>%
+                filter(leto == input$sliderletopiramida)
+  sloBAR <- rbind(slo.moski$stevilo, slo.zenske$stevilo)
+  #moški_slo
+  barplot(100 * sloBAR[1,]/sum(prebivalstvoBAR),
+          horiz=TRUE,
+          xlim = c(-5, 5),
+          col = "lightblue",
+          main = "Porazdelitev prebivalcev po starosti (SLO)",
+          xlab = "Število prebivalcev",
+          las=1,
+          xaxt="n",
+          names.arg = prebivalstvo.skupaj$starost[1:19])
+  #ženske_slo
+  barplot(100 * (-sloBAR[2,]/sum(prebivalstvoBAR)),
+          add=TRUE,
+          horiz=TRUE,
+          col = "lightcoral",
+          las=1,
+          xaxt="n",
+          names.arg = prebivalstvo.skupaj$starost[1:19])
+  # ker je xlim nastavljena na [-5,5] se umetno nastavljena axis ujema
+  axis(1, at=(-5):5, labels=FALSE, tck=.02)
+  mtext(paste0(c(5:1, 0:5), "%"), side = 1, 1, at=(-5):5, las=1)
+})
+```
+
+Kot smo pričakovali je starostna piramida izredno podobna prejšnji, saj ima večina prebivalstva Slovensko državljanstvo.
+
+Poglejmo si še starostno piramido prebivalcev, ki nimajo slovenskega državljanstva. Ta bo morda povedala več o prebivalcih, ki niso slovenski državljani.
+
+```{r starostna_porazdelitev_tuji, echo=FALSE, message=FALSE, fig.align='center', fig.cap='Starostna porazdelitev prebivalstva, samo tuji državljani'}
+renderPlot({
+  tujci.skupaj <- prebivalstvo %>% filter(drzavljanstvo != "Slovenija") %>%
+                  group_by(spol, leto , starost) %>%
+                  summarise_at(vars(stevilo), list(stevilo = sum)) %>%
+                  slice(match(c("0-4 let", "5-9 let", "10-14 let", "15-19 let", "20-24 let", "25-29 let", "30-34 let", 
+                                "35-39 let", "40-44 let", "45-49 let", "50-54 let", "55-59 let", "60-64 let", "65-69 let",
+                                "70-74 let", "75-79 let", "80-84 let", "85-89 let", "90 + let"), starost)) %>%
+                  filter(leto == input$sliderletopiramida)
+  
+  tujciBAR <- rbind((tujci.skupaj %>% filter(spol == "Moški"))$stevilo,
+                    (tujci.skupaj %>% filter(spol == "Ženske"))$stevilo)
+  
+  #moški_tujci
+  barplot(100 * tujciBAR[1,]/sum(prebivalstvoBAR),
+          horiz=TRUE,
+          xlim = c(-0.5, 0.5),
+          col = "lightblue",
+          main = "Porazdelitev prebivalcev po starosti (TUJCI)",
+          xlab = "Število prebivalcev",
+          las=1,
+          xaxt="n",
+          names.arg = prebivalstvo.skupaj$starost[1:19])
+  #ženske_tujci
+  barplot(100 * (-tujciBAR[2,]/sum(prebivalstvoBAR)),
+          add=TRUE,
+          horiz=TRUE,
+          col = "lightcoral",
+          las=1,
+          xaxt="n",
+          names.arg = prebivalstvo.skupaj$starost[1:19])
+  # ker je xlim nastavljena na [-5,5] se umetno nastavljena axis ujema
+  axis(side = 1, at=((-5):5)/10, labels=FALSE, tck=.02)
+  mtext(paste0(c(5:1, 0:5)/10, "%"), side = 1, line = 1, at=((-5):5)/10, las=1)
+})
+```
+
+Ponovno ne izpolnemo imena piramida, opazimo pa, da je veliko večji del tujih državljanov moških. Če želimo ugibati lahko predvidevamo, da je razlog za večje število moških delo. Vednar tega ne moremo potrditi iz naših podatkov, trdimo lahko le, da je število moških s tujim državljanstvom večje kot število žensk s tujim državljanstvom. Ta razlika je najbolj očitna med *20 - 74 let*.
+
+***
+
+# Analiza z zemljevidi
+
+Na vrsti je zabava z zemljevidi, kjer si bomo pogledali par različnih zemljevidov, ki so nekoliko zanimivi oziroma so se mi zdeli zanimivi. Vsi zemljevidi so narejeni tako, da pogledamo število državljanov posamezne države v Republiki Sloveniji v določenem letu in to vrednost predpišemo domovini teh državljanov. Torej, če imamo v podatkih, da je v letu *2011* v Sloveniji *59* prebivalcev z *albanskim* državljanstvom se na zemljevidu za leto *2011* državi *Albaniji* da vrednost *59*.
+ 
+```{r uvoz_zemljevid, echo=FALSE, message=FALSE}
+inputPanel(
+  sliderInput("sliderletozemljevid", label = "Leto:",
+              min = 2011, max = 2019, value = 2011, step = 1, sep = "")
+)
+source("vizualizacija/vizualizacija_moj.r", encoding="UTF-8")
+```
+
+Prvi je zemljevid Evrope (brez Ruskega dela Evrope in Turčije). Na njem je prikazano koliko tujih državljanov je iz katere Evropske države.
+
+```{r zemljevid_evropa, echo=FALSE, fig.align='center', fig.cap='Zemljevid ena'}
+
+renderPlot({
+  testZ <- tabela.evropa %>% 
+            add_column(rep(evropske.drzave.ang, times=9), .after = 'skupaj') %>% filter(leto == input$sliderletozemljevid)
+  test <- testZ$skupaj
+  # v grafih za poročilo, se zamenja vektor pri "vrednost"
+  test.tabela <- data.frame(region = as.character(evropske.drzave.ang),
+                            vrednost = as.numeric(test))
+  
+  test.tabela.zemljevid <- inner_join(evropske.drzave.zemljevid.ang, test.tabela, by = "region")
+
+  ggplot(data = evropske.drzave.zemljevid.ang %>% filter(region != "Slovenia"), mapping = aes(x = long, y = lat, group = group)) +
+                  scale_fill_gradient(name = "Vrednost", low = "lightblue", high = "darkblue", na.value = "grey50") +
+                  geom_polygon(data = test.tabela.zemljevid %>% filter(region != "Slovenia"), aes(fill= vrednost), color = "white") +
+                  theme(
+                    axis.text = element_blank(),
+                    axis.ticks = element_blank(),
+                    axis.title = element_blank()
+                  )
+})
+```
+
+Zemljevid je barvno precej nepregleden, vendar v njem močno izstopa Bosna in Hercegovina, različne odtenke barve lahko opazimo pri nekaj preostalih balkanskih držav. Zato si oglejmo samo zemljevid balkana.
+
+```{r zemljevid_balkan, echo=FALSE, fig.align='center', fig.cap='Zemljevid dva'}
+renderPlot({
+  balkan <- c("Albanija", "Bolgarija", "Bosna in Hercegovina", "Črna gora", "Grčija", "Hrvaška", "Kosovo", "Severna Makedonija",
+              "Srbija")
+  
+  balkan.ang <- c("Albania", "Bulgaria", "Bosnia and Herzegovina", "Montenegro","Greece", "Croatia", "Kosovo", "Macedonia", "Serbia")
+  
+  balkan.tabela <- tabela.evropa %>% filter(drzavljanstvo %in% balkan) %>%
+                  add_column(rep(balkan.ang, times=9), .after = 'skupaj') %>% filter(leto == input$sliderletozemljevid)
+  
+  balkanske.drzave.zemljevid <- map_data("world", region = balkan.ang)
+  
+  balkan.tabela.zemljevid <- inner_join(balkanske.drzave.zemljevid, 
+                                        data.frame(region = as.character(balkan.ang), vrednost = as.numeric(balkan.tabela$skupaj)), by= "region")
+  
+  ggplot(data = balkanske.drzave.zemljevid, mapping = aes(x = long, y = lat, group = group)) +
+                    scale_fill_gradient(name = "Vrednost", low = "lightblue", high = "darkblue", na.value = "grey50") +
+                    geom_polygon(data = balkan.tabela.zemljevid, aes(fill= vrednost), color = "white") +
+                    theme(
+                      axis.text = element_blank(),
+                      axis.ticks = element_blank(),
+                      axis.title = element_blank()
+                    ) + 
+                    theme(legend.position = "right")
+})
+```
+
+Zemljevid balkana pokaže nekoliko več, vendar Bosna in Hercegovina še vedno precej izstopa. Iz zemljevida lahko dobimo občutek, državljani iz katerih držav se giblejo v katerem velikostnem redu, je pa razlika med *0 in 1000* precej nepregledna. Zaradi nepreglednosti in ker Bosna in Hercegovina še vedno tako močno izstopa, jo izvzamemo iz naslednjega zemljevida za večjo preglednost.
+
+```{r zemljevid_balkan_brez_bih, echo=FALSE, fig.align='center', fig.cap='Zemljevid tri'}
+renderPlot({
+  balkan.brez.bih <- balkan[-3]
+  balkan.brez.bih.ang <- balkan.ang[-3]
+  
+  balkan.brez.bih.tabela <- tabela.evropa %>% filter(drzavljanstvo %in% balkan.brez.bih) %>%
+                            add_column(rep(balkan.brez.bih.ang, times=9), .after = 'skupaj') %>% 
+                            filter(leto == input$sliderletozemljevid)
+  
+  balkan.brez.bih.zemljevid <- map_data("world", region = balkan.brez.bih.ang)
+  
+  balkan.brez.bih.tabela.zemljevid <- inner_join(balkan.brez.bih.zemljevid,
+                                                data.frame(region = as.character(balkan.brez.bih.ang), vrednost = as.numeric(balkan.brez.bih.tabela$skupaj)),
+                                                by = "region")
+  
+  ggplot(data = balkan.brez.bih.zemljevid, mapping = aes(x = long, y = lat, group = group))+
+                              scale_fill_gradient(name = "Vrednost", low = "lightblue", high = "darkblue", na.value = "grey50") +
+                              geom_polygon(data = balkan.brez.bih.tabela.zemljevid, aes(fill= vrednost), color = "white") +
+                              theme(
+                                axis.text = element_blank(),
+                                axis.ticks = element_blank(),
+                                axis.title = element_blank()
+                              ) +
+                              theme(legend.position = "right")
+})
+```
+
+Z izvzetjem Bosne in Hercegovine smo dosegli večjo preglednost med ostalimi balkanskimi državami. Velikostni redi števila državljanov iz posameznih držav so tako bolj jasni.
+
+Slovenija je članica Evropske Unije, zato si poglejmo zemljevid, ki vsebuje le članice Evropske Unije.
+
+```{r zemljevid_eu, echo=FALSE, fig.align='center', fig.cap='Zemljevid štiri'}
+renderPlot({
+  drzave.eu <- c("Avstrija", "Belgija", "Bolgarija", "Hrvaška", "Ciper", 'Češka republika', "Danska", "Estonija", "Finska", "Francija",
+                 "Nemčija", "Grčija", "Madžarska", "Irska", "Italija", "Latvija", "Litva", "Luksemburg", "Malta", "Nizozemska",
+                 "Poljska", "Portugalska", "Romunija", "Slovaška", 'Slovenija', "Španija", "Švedska")
+  
+  drzave.v.eu <- tabela.evropa %>% filter(drzavljanstvo %in% drzave.eu) %>%
+                  add_column(rep(drzave.v.evropski.uniji, times=9), .after = 'skupaj') %>% filter(leto == input$sliderletozemljevid)
+  
+  drzave.v.eu.zemljevid <- map_data("world", region = drzave.v.evropski.uniji)
+  
+  drzave.v.eu.tabela.zemljevid <- inner_join(drzave.v.eu.zemljevid,
+                                             data.frame(region = as.character(drzave.v.evropski.uniji), vrednost = as.numeric(drzave.v.eu$skupaj)),
+                                             by = "region")
+  
+  ggplot(data = drzave.v.eu.zemljevid %>% filter(region != "Slovenia"), mapping = aes(x = long, y = lat, group = group))+
+                geom_polygon(color = "black", fill = NA) +
+                geom_polygon(data = drzave.v.eu.tabela.zemljevid %>% filter(region != "Slovenia"), aes(fill= vrednost), color = "white") +
+                theme(
+                  axis.text = element_blank(),
+                  axis.ticks = element_blank(),
+                  axis.title = element_blank()
+                ) +
+                scale_fill_gradient(name = "Vrednost", low = "lightblue", high = "darkblue", na.value = "grey50") +
+                theme(legend.position = "right")
+})
+```
+
+Kot prej se ponovno srečamo z nepreglednostjo glede števila prebivalcev iz preostalih držav, je pa iz zemljevida očitno, da je največ tujih državljanov iz Evropske unije prebivalcev Hrvaške. Močnejši odtenek barve pa lahko opazimo tudi pri Bolgariji, Nemčiji in Italiji.
+
+Za večjo preglednost lahko izvzamemo Hrvaško in tako dobimo bolši pregled o kakšnih številkah prebivalcev iz preostalih držav Evropske unije najdemo v Sloveniji.
+
+```{r zemljevid_eu_brez_hrv, echo=FALSE, fig.align='center', fig.cap='Zemljevid pet'}
+renderPlot({
+  drzave.eu <- c("Avstrija", "Belgija", "Bolgarija", "Hrvaška", "Ciper", 'Češka republika', "Danska", "Estonija", "Finska", "Francija",
+                 "Nemčija", "Grčija", "Madžarska", "Irska", "Italija", "Latvija", "Litva", "Luksemburg", "Malta", "Nizozemska",
+                 "Poljska", "Portugalska", "Romunija", "Slovaška", 'Slovenija', "Španija", "Švedska")
+  
+  drzave.v.eu <- tabela.evropa %>% filter(drzavljanstvo %in% drzave.eu) %>%
+                  add_column(rep(drzave.v.evropski.uniji, times=9), .after = 'skupaj') %>% filter(leto == input$sliderletozemljevid)
+  
+  drzave.v.eu.zemljevid <- map_data("world", region = drzave.v.evropski.uniji)
+  
+  drzave.v.eu.tabela.zemljevid <- inner_join(drzave.v.eu.zemljevid,
+                                             data.frame(region = as.character(drzave.v.evropski.uniji), vrednost = as.numeric(drzave.v.eu$skupaj)),
+                                             by = "region")
+  
+  ggplot(data = drzave.v.eu.zemljevid %>% filter(region != "Slovenia") %>% filter(region != "Croatia"), mapping = aes(x = long, y = lat, group = group))+
+  geom_polygon(color = "black", fill = NA) +
+  geom_polygon(data = drzave.v.eu.tabela.zemljevid %>% filter(region != "Slovenia") %>% filter(region != "Croatia"), aes(fill= vrednost), color = "white") +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank()
+  ) +
+  scale_fill_gradient(name = "Vrednost", low = "lightblue", high = "darkblue", na.value = "grey50") +
+  theme(legend.position = "right")
+})
+```
+
+Ko pogledamo zemljevid držav Evropske unije z izvzeto Hrvaško dobimo dober pregled o tem o kakšni vrednosti prebivalcev z državljanstvom iz posamezne države najdemo v Sloveniji.
+
+***

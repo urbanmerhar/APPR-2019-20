@@ -24,7 +24,7 @@ prebivalstvo.surovi.podatki <- uvozi.prebivalstvo()
 # potrebno je odstraniti vrstice, ki jih lahko izračunam iz drugih (primer: spol SKUPAJ, države v skupinah "SEVERNA AMERIKA")
 
 prebivalstvo.ciscenje.vrstice <- prebivalstvo.surovi.podatki %>% slice((-c(1:175, 220, 264, 293, 296, 342, 347, 348, 393, 437, 466, 469, 515)))
-# izbrisane so bile vse vrstice s spolom "SKUPAJ"
+                          # izbrisane so bile vse vrstice s spolom "SKUPAJ"
 
 # odstranimo stolpce, ki jih lahko izračunamo(primer: 2011 Starost SKUPAJ)
 
@@ -75,29 +75,29 @@ rename(prebivalstvo.ciscenje.2011, c(`2011 0-4 let` = "0-4 let",
 
 # Zdruzimo zdaj zgornje stvari in dejansko ustvarimo tabelo
 prebivalstvo.2011 <- prebivalstvo.ciscenje[ , 1:21] %>% 
-  add_column(leto.2011, .after = 2) %>% 
-  setNames(c("SPOL",
-             "DRŽAVA DRŽAVLJANSTVA",
-             "LETO",
-             "0-4 let",
-             "5-9 let",
-             "10-14 let",
-             "15-19 let",
-             "20-24 let",
-             "25-29 let",
-             "30-34 let",
-             "35-39 let",
-             "40-44 let",
-             "45-49 let",
-             "50-54 let",
-             "55-59 let",
-             "60-64 let",
-             "65-69 let",
-             "70-74 let",
-             "75-79 let",
-             "80-84 let",
-             "85-89 let",
-             "90 + let"))
+                    add_column(leto.2011, .after = 2) %>% 
+                    setNames(c("SPOL",
+                               "DRŽAVA DRŽAVLJANSTVA",
+                               "LETO",
+                               "0-4 let",
+                               "5-9 let",
+                               "10-14 let",
+                               "15-19 let",
+                               "20-24 let",
+                               "25-29 let",
+                               "30-34 let",
+                               "35-39 let",
+                               "40-44 let",
+                               "45-49 let",
+                               "50-54 let",
+                               "55-59 let",
+                               "60-64 let",
+                               "65-69 let",
+                               "70-74 let",
+                               "75-79 let",
+                               "80-84 let",
+                               "85-89 let",
+                               "90 + let"))
 
 # Podobno naredimo za ostala leta
 prebivalstvo.2012 <- prebivalstvo.ciscenje[ ,c(1,2, 22:40)] %>%
@@ -302,14 +302,14 @@ prebivalstvo.2019 <- prebivalstvo.ciscenje[ ,c(1,2, 155:173)] %>%
 
 # po zabavi copy-paste in menjavi števil združimo vse tabele v eno
 prebivalstvo.leta <- rbind(prebivalstvo.2011,
-                           prebivalstvo.2012,
-                           prebivalstvo.2013,
-                           prebivalstvo.2014,
-                           prebivalstvo.2015,
-                           prebivalstvo.2016,
-                           prebivalstvo.2017,
-                           prebivalstvo.2018,
-                           prebivalstvo.2019)
+                          prebivalstvo.2012,
+                          prebivalstvo.2013,
+                          prebivalstvo.2014,
+                          prebivalstvo.2015,
+                          prebivalstvo.2016,
+                          prebivalstvo.2017,
+                          prebivalstvo.2018,
+                          prebivalstvo.2019)
 
 # zdaj bi bilo lepo še narediti, to da starost prenesem v vrstice, da imam potem (spol, državljanstvo, leto, starost)
 
@@ -351,10 +351,10 @@ prebivalstvo %>% add_row(spol = "m", drzavljanstvo="A", leto=2012, starost="d", 
 for (i in 1:nrow(prebivalstvo.leta)) {
   for (j in 1:length(razbitje.starosti)) {
     prebivalstvo <- prebivalstvo %>% add_row(spol = as.character(prebivalstvo.leta[i,1]),
-                                             drzavljanstvo = as.character(prebivalstvo.leta[i,2]),
-                                             leto = as.integer(prebivalstvo.leta[i,3]),
-                                             starost = as.character(razbitje.starosti[j]),
-                                             stevilo = as.integer(prebivalstvo.leta[i,j+3]))
+                             drzavljanstvo = as.character(prebivalstvo.leta[i,2]),
+                             leto = as.integer(prebivalstvo.leta[i,3]),
+                             starost = as.character(razbitje.starosti[j]),
+                             stevilo = as.integer(prebivalstvo.leta[i,j+3]))
   }
 }
 

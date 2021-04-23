@@ -2,7 +2,6 @@ library(knitr)
 library(rvest)
 library(gsubfn)
 library(tidyr)
-library(tmap)
 library(shiny)
 
 options(gsubfn.engine="R")
