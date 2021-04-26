@@ -698,6 +698,3 @@ prebivalstvo.real <- prebivalstvo %>%
 #     las = 1,
 #     main = "Delež prebivalstva s tujim državljanstvom, glede na leto 2011"
 #)
-
-
-
