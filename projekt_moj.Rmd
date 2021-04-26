@@ -35,7 +35,7 @@ Namen projektne naloge je učenje programskega jezika *R* pri predmetu *Analiza 
 # Obdelava, uvoz in čiščenje podatkov
 
 ```{r uvoz, echo=FALSE, message=FALSE}
-source("uvoz/uvoz_moj.r", encoding="UTF-8")
+source("uvoz/uvoz_moj.R", encoding="UTF-8")
 ```
 
 Uvozili smo podatke o prebivalstvu v Sloveniji. Gre za podatke o državljanstvu prebivalcev. Podatki so bili pridobljeni od Statističnega urada Republike Slovenije (SURS). Surovi podatki so v obliki CSV, ki smo jih spremenili v *tidy data* obliko.
@@ -60,7 +60,7 @@ shinyAppDir("shiny/tidytabela", options=list(width="100%", height=700))
 Za hitro predstavitev prebivalstva si lahko pogledamo tortni diagram, ki prikazuje deleže državljanstev v Republiki Sloveniji. Če na drsniku spreminjamo leto lahko opazimo, da se delež tujih državljanov veča.
 
 ```{r analiza, echo=FALSE, message=FALSE}
-source("analiza/analiza_moj.r", encoding="UTF-8")
+source("analiza/analiza_moj.R", encoding="UTF-8")
 ```
 
 ```{r shiny_pie_slo_ostali, echo=FALSE}
@@ -328,7 +328,7 @@ Ponovno ne izpolnimo imena piramida, opazimo pa, da je veliko večji del tujih d
 Na vrsti je zabava z zemljevidi, kjer si bomo pogledali par različnih zemljevidov, ki so nekoliko zanimivi oziroma so se mi zdeli zanimivi. Vsi zemljevidi so narejeni tako, da pogledamo število državljanov posamezne države v Republiki Sloveniji v določenem letu in to vrednost predpišemo domovini teh državljanov. Torej, če imamo v podatkih, da je v letu *2011* v Sloveniji *59* prebivalcev z *albanskim* državljanstvom se na zemljevidu za leto *2011* državi *Albaniji* da vrednost *59*.
  
 ```{r uvoz_zemljevid, echo=FALSE, message=FALSE}
-source("vizualizacija/vizualizacija_moj.r", encoding="UTF-8")
+source("vizualizacija/vizualizacija_moj.R", encoding="UTF-8")
 ```
 
 Prvi je zemljevid Evrope (brez Ruskega dela Evrope in Turčije). Na njem je prikazano koliko tujih državljanov je iz katere Evropske države.
