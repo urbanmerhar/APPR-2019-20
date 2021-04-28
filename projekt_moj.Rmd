@@ -327,7 +327,7 @@ Ponovno ne izpolnimo imena piramida, opazimo pa, da je veliko večji del tujih d
 
 Na vrsti je zabava z zemljevidi, kjer si bomo pogledali par različnih zemljevidov, ki so nekoliko zanimivi oziroma so se mi zdeli zanimivi. Vsi zemljevidi so narejeni tako, da pogledamo število državljanov posamezne države v Republiki Sloveniji v določenem letu in to vrednost predpišemo domovini teh državljanov. Torej, če imamo v podatkih, da je v letu *2011* v Sloveniji *59* prebivalcev z *albanskim* državljanstvom se na zemljevidu za leto *2011* državi *Albaniji* da vrednost *59*.
  
-```{r uvoz_zemljevid, echo=FALSE, message=FALSE}
+```{r uvoz_zemljevid, message=FALSE, include=FALSE}
 source("vizualizacija/vizualizacija_moj.R", encoding="UTF-8")
 ```
 
