@@ -6,7 +6,11 @@
 #   https://github.com/jaanos/APPR-docker
 # Ne vključuj v svoj program!
 
-#install.packages(c(
+#install.packages(c("knitr",
+#    "rvest",
+#    "gsubfn",
+#    "tidyr",
+#    "shiny", "plyr", "dplyr", "tibble", "maps", "viridis", "ggplot2", 
 #    "expm",
 #    "formatR",
 #    "numDeriv",
