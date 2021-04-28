@@ -52,7 +52,7 @@ leto.2011 <- rep.int(2011, 332)
 library(tibble)
 add_column(prebivalstvo.ciscenje.2011, leto.2011, .after = 2)
 
-library(plyr) #za preimenovanje stolpcev
+#za preimenovanje stolpcev
 rename(prebivalstvo.ciscenje.2011, c(`2011 0-4 let` = "0-4 let",
                                      `2011 5-9 let` = "5-9 let",
                                      `2011 10-14 let` = "10-14 let",
