@@ -183,31 +183,35 @@ razbitje.ostali <- razbitje.ostali %>%
 #     topo.colors(11),
 #     main = " Razporeditev prebivalcev brez Slovenskega državljanstva")
 
-# Graf prirastkov drzavljanov glede na prejšnje leto
-#===================================================
 
-tabela.sprememba.leto <- left_join(tabela.evropa %>% filter(leto == 2011), tabela.evropa %>% filter(leto == 2012), by = "drzavljanstvo") %>%
-                         left_join(tabela.evropa %>% filter(leto == 2013), by ="drzavljanstvo") %>%
-                         left_join(tabela.evropa %>% filter(leto == 2014), by ="drzavljanstvo") %>%
-                         left_join(tabela.evropa %>% filter(leto == 2015), by ="drzavljanstvo") %>%
-                         left_join(tabela.evropa %>% filter(leto == 2016), by ="drzavljanstvo") %>%
-                         left_join(tabela.evropa %>% filter(leto == 2017), by ="drzavljanstvo") %>%
-                         left_join(tabela.evropa %>% filter(leto == 2018), by ="drzavljanstvo") %>%
-                         left_join(tabela.evropa %>% filter(leto == 2019), by ="drzavljanstvo") %>%
-                         select(2, 3, 5, 7, 9, 11, 13, 15, 17, 19) %>%
-                         setNames(c('drzavljanstvo', 'stevilo2011', 'stevilo2012', 'stevilo2013', 'stevilo2014', 'stevilo2015',
-                                  'stevilo2016', 'stevilo2017', 'stevilo2018', 'stevilo2019')) %>%
-                         mutate(sprememba1112 = stevilo2012 - stevilo2011, 
-                                sprememba1213 = stevilo2013 - stevilo2012,
-                                sprememba1314 = stevilo2014 - stevilo2013,
-                                sprememba1415 = stevilo2015 - stevilo2014,
-                                sprememba1516 = stevilo2016 - stevilo2015,
-                                sprememba1617 = stevilo2017 - stevilo2016,
-                                sprememba1718 = stevilo2018 - stevilo2017,
-                                sprememba1819 = stevilo2019 - stevilo2018) %>%
-                        select(1, c(11:18)) %>%
-                        filter(drzavljanstvo %in% c("Slovenija", "Hrvaška", "Srbija", "Kosovo", "Bosna in Hercegovina", "Severna Makedonija"))
-
+#NE BOM UPORABIL
+#NE BOM UPORABIL# Graf prirastkov drzavljanov glede na prejšnje leto
+#NE BOM UPORABIL#===================================================
+#
+#tabela.sprememba.leto <- left_join(tabela.evropa %>% filter(leto == 2011), tabela.evropa %>% filter(leto == 2012), by = "drzavljanstvo") %>%
+#                         left_join(tabela.evropa %>% filter(leto == 2013), by ="drzavljanstvo") %>%
+#                         left_join(tabela.evropa %>% filter(leto == 2014), by ="drzavljanstvo") %>%
+#                         left_join(tabela.evropa %>% filter(leto == 2015), by ="drzavljanstvo") %>%
+#                         left_join(tabela.evropa %>% filter(leto == 2016), by ="drzavljanstvo") %>%
+#                         left_join(tabela.evropa %>% filter(leto == 2017), by ="drzavljanstvo") %>%
+#                         left_join(tabela.evropa %>% filter(leto == 2018), by ="drzavljanstvo") %>%
+#                         left_join(tabela.evropa %>% filter(leto == 2019), by ="drzavljanstvo") %>%
+#                         select(2, 3, 5, 7, 9, 11, 13, 15, 17, 19) %>%
+#                         setNames(c('drzavljanstvo', 'stevilo2011', 'stevilo2012', 'stevilo2013', 'stevilo2014', 'stevilo2015',
+#                                  'stevilo2016', 'stevilo2017', 'stevilo2018', 'stevilo2019')) %>%
+#                         mutate(sprememba1112 = stevilo2012 - stevilo2011, 
+#                                sprememba1213 = stevilo2013 - stevilo2012,
+#                                sprememba1314 = stevilo2014 - stevilo2013,
+#                                sprememba1415 = stevilo2015 - stevilo2014,
+#                                sprememba1516 = stevilo2016 - stevilo2015,
+#                                sprememba1617 = stevilo2017 - stevilo2016,
+#                                sprememba1718 = stevilo2018 - stevilo2017,
+#                                sprememba1819 = stevilo2019 - stevilo2018) %>%
+#                        select(1, c(11:18)) %>%
+#                        filter(drzavljanstvo %in% c("Slovenija", "Hrvaška", "Srbija", "Kosovo", "Bosna in Hercegovina", "Severna Makedonija"))
+#
+#NE BOM UPORABIL /\
+#NE BOM UPORABIL ||
 
 # Zdaj imam tabelo, ki pove +- glede na spremembo državljanov neke države glede na prejšnje leto
 # Naredimo graf iz največjih vrednosti torej:Slovenija, Bih, Hrvaška, Srbija, Makedonija, KOsovo
