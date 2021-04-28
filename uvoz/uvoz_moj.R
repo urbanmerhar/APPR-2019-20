@@ -335,33 +335,47 @@ razbitje.starosti <- c("0-4 let",
 
 # for row in "prebivalstvo.leta" ustvari dovolj vrstic za vektor "razbitje.starosti" in vzemi pravo vrednost iz "prebivalstvo leta"
 
+# USTVARIMO NOVO TABELO; KI JO BOMO NATO SHRANILI V CSV, DA BOMO PRIHRANILI ČAS OB PONOVNIH ZAGONIH
 # prazna tabela prebivalstva
-prebivalstvo <- data.frame(spol=character(),
-                           drzavljanstvo=character(),
-                           leto=integer(),
-                           starost=character(),
-                           stevilo=integer())
+#prebivalstvo <- data.frame(spol=character(),
+#                           drzavljanstvo=character(),
+#                           leto=integer(),
+#                           starost=character(),
+#                           stevilo=integer())
 # TEST
 # tako vstavimo podatke v prazno tabelo
-prebivalstvo %>% add_row(spol = "m", drzavljanstvo="A", leto=2012, starost="d", stevilo=5)
+#prebivalstvo %>% add_row(spol = "m", drzavljanstvo="A", leto=2012, starost="d", stevilo=5)
 
 
 
 # zazeneš dvojno for zanko in dobiš tabelo o populaciji v "pomoje" tidy data obliki
-for (i in 1:nrow(prebivalstvo.leta)) {
-  for (j in 1:length(razbitje.starosti)) {
-    prebivalstvo <- prebivalstvo %>% add_row(spol = as.character(prebivalstvo.leta[i,1]),
-                             drzavljanstvo = as.character(prebivalstvo.leta[i,2]),
-                             leto = as.integer(prebivalstvo.leta[i,3]),
-                             starost = as.character(razbitje.starosti[j]),
-                             stevilo = as.integer(prebivalstvo.leta[i,j+3]))
-  }
-}
+# iz časovnih razlogov je ta koda zdaj zakomentirana, da tega ustvarjanja tabele ne storimo vsakič
+#for (i in 1:nrow(prebivalstvo.leta)) {
+#  for (j in 1:length(razbitje.starosti)) {
+#    prebivalstvo <- prebivalstvo %>% add_row(spol = as.character(prebivalstvo.leta[i,1]),
+#                             drzavljanstvo = as.character(prebivalstvo.leta[i,2]),
+#                             leto = as.integer(prebivalstvo.leta[i,3]),
+#                             starost = as.character(razbitje.starosti[j]),
+#                             stevilo = as.integer(prebivalstvo.leta[i,j+3]))
+#  }
+#}
 
 # Za konec še zamenjam vrednosti 'NA' z 0, ker mi je to drugače nagajalo pri analizi
-prebivalstvo[is.na(prebivalstvo)] <- 0
+#prebivalstvo[is.na(prebivalstvo)] <- 0
 
 # za preglednost odstranimo nepotrebne tabele iz environmenta
 rm(prebivalstvo.2011, prebivalstvo.2012, prebivalstvo.2013, prebivalstvo.2014, prebivalstvo.2015, prebivalstvo.2016,
    prebivalstvo.2017, prebivalstvo.2018, prebivalstvo.2019, prebivalstvo.ciscenje, prebivalstvo.ciscenje.2011,
    prebivalstvo.ciscenje.stolpci, prebivalstvo.ciscenje.vrstice, prebivalstvo.leta)
+
+# Tabelo, ki smo jo dobili iz dvojne zanke smo shranili, da jo lahko zdaj beremo
+#write.csv(prebivalstvo, "C:\\Users\\Urban\\Documents\\Finančna matematika\\Projekt R\\APPR-2019-20-master\\podatki\\prebivalstvo.csv")
+
+prebivalstvo <- read_delim("podatki/prebivalstvo.csv", 
+                   ",", escape_double = FALSE,
+                   col_names=TRUE,
+                   col_types = NULL,
+                   locale = locale(encoding = "WINDOWS-1250"), 
+                   trim_ws = TRUE,)
+
+prebivalstvo$X1 <- NULL

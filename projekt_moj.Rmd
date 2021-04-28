@@ -34,7 +34,7 @@ Namen projektne naloge je učenje programskega jezika *R* pri predmetu *Analiza 
 
 # Obdelava, uvoz in čiščenje podatkov
 
-```{r uvoz, echo=FALSE, message=FALSE}
+```{r uvoz, error=FALSE, include=FALSE}
 source("uvoz/uvoz_moj.R", encoding="UTF-8")
 ```
 
@@ -45,7 +45,7 @@ Uvozili smo podatke o prebivalstvu v Sloveniji. Gre za podatke o državljanstvu 
   - `drzavljanstvo` - spremenljivka: državljanstvo,
   - `leto` - spremenljivka: leto meritve,
   - `starost` - spremenljivka: interval starostne skupine,
-  - `stevilo` - meritev: število oseb določenega spola, državljanstva in starosti, ki so živeli v Republiki Sloveniji v letu meritve
+  - `stevilo` - meritev: število oseb določenega spola, državljanstva in starosti, ki so živeli v Republiki Sloveniji v letu meritve.
   
 ```{r shiny_surovatabela, echo=FALSE}
 shinyAppDir("shiny/surovatabela", options=list(width="100%", height=840))
