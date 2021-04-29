@@ -715,3 +715,96 @@ prebivalstvo.real <- prebivalstvo %>%
 #     las = 1,
 #     main = "Delež prebivalstva s tujim državljanstvom, glede na leto 2011"
 #)
+
+# NAPREDNA ANALIZA, IGRAL SE BOM Z LINEARNO REGRESIJO, ko pride do napovedovanja upadanja/ naraščanja slovenskih, tujih državljanov
+#==================================================================================================================================
+
+
+### VSI
+# LINEARNA REGRESIJA, kjer predpostavimo:
+# STEVILO = a + LETO * b
+df.vsi <- prebivalstvo %>% 
+      group_by(leto) %>%
+      summarise_at(vars(stevilo), list(stevilo = sum))
+
+lmvsi = lm(stevilo ~ leto, data=df.vsi)
+summary(lmvsi)
+
+plot(x = df.vsi$leto, y = df.vsi$stevilo,
+     lwd = "2",
+     pch = 16,
+     col = "lightblue",
+     xlab= "Leto",
+     ylab= "Število prebivalcev",
+     las = 1,)
+abline(lmvsi,
+       lwd = "2")
+#text(2012,2075000,'STEVILO = a + b*LETO')
+
+### VSI PO SPOLU
+
+df.vsi.spol <- prebivalstvo %>%
+               group_by(leto, spol) %>%
+               summarise_at(vars(stevilo), list(stevilo = sum))
+
+lm.vsi.moski <- lm(stevilo ~ leto, data = (df.vsi.spol %>% filter(spol == "Moški")))
+lm.vsi.zenske <- lm(stevilo ~ leto, data = (df.vsi.spol %>% filter(spol == "Ženske")))
+plot(x= df.vsi.spol$leto, y = df.vsi.spol$stevilo,
+     lwd = "2",
+     pch = 16,
+     col = c('lightblue', "lightcoral"),
+     xlab= "Leto",
+     ylab= "Število prebivalcev",
+     las = 1,)
+abline(lm.vsi.moski)
+abline(lm.vsi.zenske)
+
+### SLOVENCI
+
+df.slovenci <- prebivalstvo %>%
+               filter(drzavljanstvo == "Slovenija") %>%
+               group_by(leto) %>%
+               summarise_at(vars(stevilo), list(stevilo = sum))
+
+lm.slovenci = lm(stevilo ~ leto, data=df.slovenci)
+
+plot(x = df.slovenci$leto, y = df.slovenci$stevilo,
+     lwd = "2",
+     pch = 16,
+     col = 'lightblue',
+     xlab= "Leto",
+     ylab= "Število Slovencev",
+     las = 1,)
+abline(lm.slovenci,
+       lwd = "2",
+       col = "darkred")
+
+### SLOVENCI PO SPOLU
+
+df.slovenci.spol <- prebivalstvo %>%
+                    filter(drzavljanstvo == "Slovenija") %>%
+                    group_by(leto, spol) %>%
+                    summarise_at(vars(stevilo), list(stevilo = sum))
+
+lm.slovenci.moski <- lm(stevilo ~ leto, data = (df.slovenci.spol %>% filter(spol == "Moški")))
+lm.slovenci.zenske <- lm(stevilo ~ leto, data = (df.slovenci.spol %>% filter(spol == "Ženske")))
+plot(x= df.slovenci.spol$leto, y = df.slovenci.spol$stevilo,
+     lwd = "2",
+     pch = 16,
+     col = c('lightblue', "lightcoral"),
+     xlab= "Leto",
+     ylab= "Število Slovencev",
+     las = 1,)
+abline(lm.slovenci.moski)
+abline(lm.slovenci.zenske)
+
+### TUJCI
+df.tujci <- prebivalstvo %>%
+            filter(drzavljanstvo != "Slovenija") %>%
+            group_by(leto) %>%
+            summarise_at(vars(stevilo), list(stevilo = sum))
+
+lm.tujci = lm(stevilo ~ leto, data = df.tujci)
+
+plot(x = df.tujci$leto, y = df.tujci$stevilo)
+abline(lm.tujci)
