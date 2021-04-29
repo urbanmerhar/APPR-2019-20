@@ -1,6 +1,8 @@
 # 4. faza: Analiza podatkov
 #==========================
 
+library(ggplot2)
+library(viridis)
 #! je moja oznaka, da hitro najdem kode za grafe
 
 # VEČ ALI MANJ VEDNO DELAM S FILTROM ZA LETO, zato za graf za poljubno leto zamenjaj vrednost leta pri vseh filtrih
@@ -212,6 +214,17 @@ razbitje.ostali <- razbitje.ostali %>%
 #
 #NE BOM UPORABIL /\
 #NE BOM UPORABIL ||
+
+# GRAF BARPLOT SKOZI LETA
+#========================
+
+#ggplot(tabela.eu.slovenija.preostalaevropa.ostalo, aes(fill=drzavljanstvo, y=stevilo, x=leto)) + 
+#  geom_bar(position="fill", stat="identity") +
+#  xlab("Leto") +
+#  scale_x_continuous(breaks=seq(2011, 2019, 1)) +
+#  ylab("Delež") +
+#  ggtitle("Deleži državljanstva skozi leta") +
+#  scale_fill_manual("Državljanstvo", values = c("Slovensko" = "darkgreen", "Evropsko" = "darkblue", "Evropa brez EU" = "darkred", "Ostalo" = "black"))
 
 # Zdaj imam tabelo, ki pove +- glede na spremembo državljanov neke države glede na prejšnje leto
 # Naredimo graf iz največjih vrednosti torej:Slovenija, Bih, Hrvaška, Srbija, Makedonija, KOsovo
