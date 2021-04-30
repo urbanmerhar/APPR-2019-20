@@ -7,7 +7,7 @@ server <- function(input, output) {
          col = "lightblue",
          xlab= "Leto",
          ylab= "Število prebivalcev",
-         las = 1,)
+         grid())
     abline(lmvsi,
            lwd = "2")
   })
@@ -20,7 +20,7 @@ server <- function(input, output) {
          col = c('lightblue', "lightcoral"),
          xlab= "Leto",
          ylab= "Število prebivalcev",
-         las = 1,)
+         grid())
     abline(lm.vsi.moski,
            lwd = "2")
     abline(lm.vsi.zenske,

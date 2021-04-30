@@ -303,6 +303,14 @@ Pogosto radi napovedujemo prihodnost in to bomo poskusili storiti v tem razdelku
 shinyAppDir("shiny/regresija_1", options=list(width="100%", height=650))
 ```
 
+```{r shiny_regresija_2, echo=FALSE, fig.align='center'}
+shinyAppDir("shiny/regresija_2", options=list(width="100%", height=650))
+```
+
+```{r shiny_regresija_3, echo=FALSE, fig.align='center'}
+shinyAppDir("shiny/regresija_3", options=list(width="100%", height=650))
+```
+
 ## Starostna piramida prebivalstva
 
 Glede na pogostost govorjenja o staranju prebivalstva na stari celini, si poglejmo kaj o tem pravijo podatki o prebivalstvu v Republiki Sloveniji. Torej oglejmo si porazdelitev starostne strukture. Uporabimo vse podatke, ki pa so filtrirani le na leto meritve.(Opomba: v podatkih se spremenijo vrednosti za *85-90 let* in *90 + let* po letu *2014*, saj so prej merili le do intervala *85 + let*.)

@@ -807,4 +807,41 @@ df.tujci <- prebivalstvo %>%
 lm.tujci = lm(stevilo ~ leto, data = df.tujci)
 
 plot(x = df.tujci$leto, y = df.tujci$stevilo)
-abline(lm.tujci)
+abline(lm.tujci,
+       lwd = "2",
+       col = "darkred")
+
+df.tujci.spol <- prebivalstvo %>%
+                 filter(drzavljanstvo != "Slovenija") %>%
+                 group_by(leto, spol) %>%
+                 summarise_at(vars(stevilo), list(stevilo = sum))
+
+lm.tujci.moski <- lm(stevilo ~ leto, data = (df.tujci.spol %>% filter(spol == "Moški")))
+lm.tujci.zenske <- lm(stevilo ~ leto, data = (df.tujci.spol %>% filter(spol == "Ženske")))
+plot(x= df.tujci.spol$leto, y = df.tujci.spol$stevilo,
+     lwd = "2",
+     pch = 16,
+     col = c('lightblue', "lightcoral"),
+     xlab= "Leto",
+     las = 1,
+     grid())
+abline(lm.tujci.moski,
+       lwd = "2",
+       col = "darkblue")
+abline(lm.tujci.zenske,
+       lwd = "2",
+       col = "darkred")
+
+# poskusimo dati te regresije na isti graf, za neko napoved v šali
+library("scales")
+library("ggplot2")
+ggplot() + xlim(2011, 2700) +
+         geom_abline(intercept = lmvsi$coefficients[1], slope = lmvsi$coefficients[2], color="black", size=1) +
+         geom_abline(intercept = lm.slovenci$coefficients[1], slope = lm.slovenci$coefficients[2], color="darkgreen", size=1) +
+         geom_abline(intercept = lm.tujci$coefficients[1], slope = lm.tujci$coefficients[2], color="darkred", size=1) +
+         scale_y_continuous(labels = comma_format(big.mark = ".", decimal.mark = ","), limits= c(0, 4000000)) +
+         theme_bw() +
+         labs(title="Napoved za šalo",
+              x="Leto",
+              y="Število prebivalcev")
+ 
