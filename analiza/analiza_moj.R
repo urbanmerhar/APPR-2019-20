@@ -730,16 +730,15 @@ df.vsi <- prebivalstvo %>%
 lmvsi = lm(stevilo ~ leto, data=df.vsi)
 summary(lmvsi)
 
-plot(x = df.vsi$leto, y = df.vsi$stevilo,
-     lwd = "2",
-     pch = 16,
-     col = "lightblue",
-     xlab= "Leto",
-     ylab= "Število prebivalcev",
-     las = 1,)
-abline(lmvsi,
-       lwd = "2")
-#text(2012,2075000,'STEVILO = a + b*LETO')
+#ggplot(df.vsi, aes(leto, stevilo)) +
+#   geom_point(color="lightblue", size = 3) +
+#   geom_abline(intercept = lmvsi$coefficients[1], slope = lmvsi$coefficients[2], color="black", size=1) +
+#   theme_bw() +
+#   scale_x_discrete(limits=c(2011:2019)) + 
+#   labs(title="",
+#        x="Leto",
+#        y="Število prebivalcev") #+
+#   #annotate("text", x = 2013, y = 2075000, label = "italic(R) ^ 2 ==  0.8623", parse =TRUE)
 
 ### VSI PO SPOLU
 
@@ -749,15 +748,28 @@ df.vsi.spol <- prebivalstvo %>%
 
 lm.vsi.moski <- lm(stevilo ~ leto, data = (df.vsi.spol %>% filter(spol == "Moški")))
 lm.vsi.zenske <- lm(stevilo ~ leto, data = (df.vsi.spol %>% filter(spol == "Ženske")))
-plot(x= df.vsi.spol$leto, y = df.vsi.spol$stevilo,
-     lwd = "2",
-     pch = 16,
-     col = c('lightblue', "lightcoral"),
-     xlab= "Leto",
-     ylab= "Število prebivalcev",
-     las = 1,)
-abline(lm.vsi.moski)
-abline(lm.vsi.zenske)
+
+#ggplot(df.vsi.spol, aes(leto, stevilo)) + 
+#   geom_point(aes(colour = factor(spol)), size = 3) +
+#   scale_colour_manual(values=c("lightblue", "lightcoral")) +
+#   geom_abline(intercept = lm.vsi.moski$coefficients[1], slope = lm.vsi.moski$coefficients[2], color="blue", size=1) +
+#   geom_abline(intercept = lm.vsi.zenske$coefficients[1], slope = lm.vsi.zenske$coefficients[2], color="red", size=1) +
+#   theme_bw() +
+#   scale_x_discrete(limits=c(2011:2019)) + 
+#   labs(title="",
+#        col="Spol",
+#        x="Leto",
+#        y="Število prebivalcev")
+
+#plot(x= df.vsi.spol$leto, y = df.vsi.spol$stevilo,
+#     lwd = "2",
+#     pch = 16,
+#     col = c('lightblue', "lightcoral"),
+#     xlab= "Leto",
+#     ylab= "Število prebivalcev",
+#     las = 1,)
+#abline(lm.vsi.moski)
+#abline(lm.vsi.zenske)
 
 ### SLOVENCI
 
@@ -768,16 +780,25 @@ df.slovenci <- prebivalstvo %>%
 
 lm.slovenci = lm(stevilo ~ leto, data=df.slovenci)
 
-plot(x = df.slovenci$leto, y = df.slovenci$stevilo,
-     lwd = "2",
-     pch = 16,
-     col = 'lightblue',
-     xlab= "Leto",
-     ylab= "Število Slovencev",
-     las = 1,)
-abline(lm.slovenci,
-       lwd = "2",
-       col = "darkred")
+#ggplot(df.slovenci, aes(leto, stevilo)) +
+#   geom_point(color="lightblue", size = 3) +
+#   geom_abline(intercept = lm.slovenci$coefficients[1], slope = lm.slovenci$coefficients[2], color="black", size=1) +
+#   theme_bw() +
+#   scale_x_discrete(limits=c(2011:2019)) + 
+#   labs(title="",
+#        x="Leto",
+#        y="Število prebivalcev")
+
+#plot(x = df.slovenci$leto, y = df.slovenci$stevilo,
+#     lwd = "2",
+#     pch = 16,
+#     col = 'lightblue',
+#     xlab= "Leto",
+#     ylab= "Število Slovencev",
+#     las = 1,)
+#abline(lm.slovenci,
+#       lwd = "2",
+#       col = "darkred")
 
 ### SLOVENCI PO SPOLU
 
@@ -788,15 +809,28 @@ df.slovenci.spol <- prebivalstvo %>%
 
 lm.slovenci.moski <- lm(stevilo ~ leto, data = (df.slovenci.spol %>% filter(spol == "Moški")))
 lm.slovenci.zenske <- lm(stevilo ~ leto, data = (df.slovenci.spol %>% filter(spol == "Ženske")))
-plot(x= df.slovenci.spol$leto, y = df.slovenci.spol$stevilo,
-     lwd = "2",
-     pch = 16,
-     col = c('lightblue', "lightcoral"),
-     xlab= "Leto",
-     ylab= "Število Slovencev",
-     las = 1,)
-abline(lm.slovenci.moski)
-abline(lm.slovenci.zenske)
+
+#ggplot(df.slovenci.spol, aes(leto, stevilo)) + 
+#   geom_point(aes(colour = factor(spol)), size = 3) +
+#   scale_colour_manual(values=c("lightblue", "lightcoral")) +
+#   geom_abline(intercept = lm.slovenci.moski$coefficients[1], slope = lm.slovenci.moski$coefficients[2], color="blue", size=1) +
+#   geom_abline(intercept = lm.slovenci.zenske$coefficients[1], slope = lm.slovenci.zenske$coefficients[2], color="red", size=1) +
+#   theme_bw() +
+#   scale_x_discrete(limits=c(2011:2019)) + 
+#   labs(title="",
+#        col="Spol",
+#        x="Leto",
+#        y="Število prebivalcev")
+
+#plot(x= df.slovenci.spol$leto, y = df.slovenci.spol$stevilo,
+#     lwd = "2",
+#     pch = 16,
+#     col = c('lightblue', "lightcoral"),
+#     xlab= "Leto",
+#     ylab= "Število Slovencev",
+#     las = 1,)
+#abline(lm.slovenci.moski)
+#abline(lm.slovenci.zenske)
 
 ### TUJCI
 df.tujci <- prebivalstvo %>%
@@ -806,10 +840,19 @@ df.tujci <- prebivalstvo %>%
 
 lm.tujci = lm(stevilo ~ leto, data = df.tujci)
 
-plot(x = df.tujci$leto, y = df.tujci$stevilo)
-abline(lm.tujci,
-       lwd = "2",
-       col = "darkred")
+#ggplot(df.tujci, aes(leto, stevilo)) +
+#   geom_point(color="lightblue", size = 3) +
+#   geom_abline(intercept = lm.tujci$coefficients[1], slope = lm.tujci$coefficients[2], color="black", size=1) +
+#   theme_bw() +
+#   scale_x_discrete(limits=c(2011:2019)) + 
+#   labs(title="",
+#        x="Leto",
+#        y="Število prebivalcev")
+
+#plot(x = df.tujci$leto, y = df.tujci$stevilo)
+#abline(lm.tujci,
+#       lwd = "2",
+#       col = "darkred")
 
 df.tujci.spol <- prebivalstvo %>%
                  filter(drzavljanstvo != "Slovenija") %>%
@@ -818,19 +861,32 @@ df.tujci.spol <- prebivalstvo %>%
 
 lm.tujci.moski <- lm(stevilo ~ leto, data = (df.tujci.spol %>% filter(spol == "Moški")))
 lm.tujci.zenske <- lm(stevilo ~ leto, data = (df.tujci.spol %>% filter(spol == "Ženske")))
-plot(x= df.tujci.spol$leto, y = df.tujci.spol$stevilo,
-     lwd = "2",
-     pch = 16,
-     col = c('lightblue', "lightcoral"),
-     xlab= "Leto",
-     las = 1,
-     grid())
-abline(lm.tujci.moski,
-       lwd = "2",
-       col = "darkblue")
-abline(lm.tujci.zenske,
-       lwd = "2",
-       col = "darkred")
+
+#ggplot(df.tujci.spol, aes(leto, stevilo)) + 
+#   geom_point(aes(colour = factor(spol)), size = 3) +
+#   scale_colour_manual(values=c("lightblue", "lightcoral")) +
+#   geom_abline(intercept = lm.tujci.moski$coefficients[1], slope = lm.tujci.moski$coefficients[2], color="blue", size=1) +
+#   geom_abline(intercept = lm.tujci.zenske$coefficients[1], slope = lm.tujci.zenske$coefficients[2], color="red", size=1) +
+#   theme_bw() +
+#   scale_x_discrete(limits=c(2011:2019)) + 
+#   labs(title="",
+#        col="Spol",
+#        x="Leto",
+#        y="Število prebivalcev")
+
+#plot(x= df.tujci.spol$leto, y = df.tujci.spol$stevilo,
+#     lwd = "2",
+#     pch = 16,
+#     col = c('lightblue', "lightcoral"),
+#     xlab= "Leto",
+#     las = 1,
+#     grid())
+#abline(lm.tujci.moski,
+#       lwd = "2",
+#       col = "darkblue")
+#abline(lm.tujci.zenske,
+#       lwd = "2",
+#       col = "darkred")
 
 # poskusimo dati te regresije na isti graf, za neko napoved v šali
 library("scales")
@@ -841,7 +897,6 @@ ggplot() + xlim(2011, 2700) +
          geom_abline(intercept = lm.tujci$coefficients[1], slope = lm.tujci$coefficients[2], color="darkred", size=1) +
          scale_y_continuous(labels = comma_format(big.mark = ".", decimal.mark = ","), limits= c(0, 4000000)) +
          theme_bw() +
-         labs(title="Napoved za šalo",
+         labs(title="",
               x="Leto",
               y="Število prebivalcev")
- 

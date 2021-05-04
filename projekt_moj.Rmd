@@ -97,99 +97,20 @@ shinyAppDir("shiny/prebivalstvo_1", options=list(width="100%", height=600))
 
 Zanimivo si je pogledati, kaj se zgodi, če na isti graf narišemo krivuljo vseh prebivalcev skupaj in vseh prebivalcev, ki imajo slovensko državljanstvo. Graf nam razkrije, da kljub temu, da število prebivalcev v Sloveniji raste pa število prebivalcev s slovenskim državljanstvom pada vse od leta *2012*.
 
-```{r graf2, echo=FALSE, message=FALSE, fig.align='center'}
-
-plot(x = 2011:2019,
-     y = (prebivalstvo.nom.spola.skupaj %>% filter(drzavljanstvo == "Slovenija"))[1,][c(2:10)],
-     ylim=range(1940000, 2100000),
-     type= "b",
-     lwd = "2",
-     pch = 16,
-     col = 'lightblue',
-     xlab= "Leto",
-     ylab= "Število prebivalcev",
-     main= "Število državljanov kombinacija"
-)
-
-lines(x = 2011:2019,
-      y = prebivalstvo.nom.spola.skupaj.vsi,
-      type= "b",
-      lwd = "2",
-      pch = 16,
-      col = 'red',
-      xlab= "Leto",)
-
-legend("topleft",
-       title="Državljanstvo",
-       legend = c("Slovensko", "Skupaj"),
-       col = c("lightblue", "red"),
-       lwd = "2",
-       cex = 0.8)
+```{r shiny_prebivalstvo_2, echo=FALSE, fig.align='center'}
+shinyAppDir("shiny/prebivalstvo_2", options=list(width="100%", height=600))
 ```
 
 Poglejmo si še prikaz prebivalcev s slovenskim državljanstvom, ki ga pa ločimo na moške in ženske. Očitno je, da je ženskih prebivalk več kot moških, vseeno pa število obeh pada od leta *2012*.
 
-```{r graf3, echo=FALSE, message=FALSE, fig.align='center'}
-
-plot(x = 2011:2019,
-     y = (prebivalstvo.nom %>% filter(spol == "Moški", drzavljanstvo == "Slovenija"))[1,][c(3:11)],
-     ylim=range(940000, 1020000),
-     type= "b",
-     lwd = "2",
-     pch = 16,
-     col = 'lightblue',
-     xlab= "Leto",
-     ylab= "Število prebivalcev/prebivalk",
-     main= "Število prebivalcev in prebivalk s slovenskim državljanstvom"
-     )
-
-lines(x = 2011:2019,
-      y = (prebivalstvo.nom %>% filter(spol == "Ženske", drzavljanstvo == "Slovenija"))[1,][c(3:11)],
-      type= "b",
-      lwd = "2",
-      pch = 16,
-      col = 'lightcoral'
-      )
-
-
-legend("left",
-       title="Spol",
-       legend = c("Moški", "Ženske"),
-       col = c("lightblue", "lightcoral"),
-       lwd = "2",
-       cex=0.8)
+```{r shiny_prebivalstvo_3, echo=FALSE, message=FALSE, fig.align='center'}
+shinyAppDir("shiny/prebivalstvo_3", options=list(width="100%", height=600))
 ```
 
 Oglejmo si podoben graf prejšnjemu, le da zdaj izrišemo samo prebivalce, ki nimajo slovenskega državljanstva. Opazimo, da pri tujih državljanih je večje število moških kot žensk ter da obe populaciji rasteta.
 
-```{r graf4, echo=FALSE, message=FALSE, fig.align='center'}
-
-plot(x = 2011:2019,
-     y = (prebivalstvo.nom.tujci.spola %>% filter(spol == "Moški"))[2:10],
-     ylim=range(24000, 91000),
-     type= "b",
-     lwd = "2",
-     pch = 16,
-     col = 'lightblue',
-     xlab= "Leto",
-     ylab= "Število prebivalcev/prebivalk",
-     main= "Število prebivalcev in prebivalk s tujim državljanstvom "
-)
-
-lines(x = 2011:2019,
-      y = (prebivalstvo.nom.tujci.spola %>% filter(spol == "Ženske"))[2:10],
-      type= "b",
-      lwd = "2",
-      pch = 16,
-      col = 'lightcoral',
-      xlab= "Leto",)
-
-legend("topleft",
-       title="Spol",
-       legend = c("Moški", "Ženske"),
-       col = c("lightblue", "lightcoral"),
-       lwd = "2",
-       cex=0.8)
+```{r shiny_prebivalstvo_4, echo=FALSE, message=FALSE, fig.align='center'}
+shinyAppDir("shiny/prebivalstvo_4", options=list(width="100%", height=600))
 ```
 
 ## Spremembe glede na leto 2011
@@ -198,118 +119,96 @@ Skozi prejšnjo poglavje smo si ogledali prikaz podatkov, kjer smo uporabljali n
 
 Najprej si poglejmo graf deleža celotnega prebivalstva glede na 2011. Kot je bilo napisano na začetku poglavja je vrednost v letu *2011* enaka *1*, saj vse primerjamo z letom *2011*. Kot pri grafu z nominalnimi vrednostmi lahko opazimo, da se je število prebivalcev skozi leta povečalo, ampak v tem grafu lahko preko vrednosti na ordinatni osi razberemo za koliko odstotkov se je povečalo število prebivalcev glede na leto *2011*.
 
-```{r graf5, echo=FALSE, message=FALSE, fig.align='center'}
-# y = vsota vseh prebivalcev
-plot(x = 2011:2019,
-     y = (prebivalstvo.real %>%
-         group_by(leto) %>%
-         summarise_at(vars(delez), list(stevilo = sum)))$stevilo,
-     type= "b",
-     lwd = "2",
-     pch = 16,
-     col = 'lightblue',
-     xlab= "Leto",
-     ylab= "",
-     las = 1,
-     main = "Delež prebivalstva glede na leto 2011"
-     )
+```{r shiny_prebivalstvo_5, echo=FALSE, message=FALSE, fig.align='center'}
+shinyAppDir("shiny/prebivalstvo_5", options=list(width="100%", height=600))
 ```
 
 Spodnji graf prikazuje delež prebivalstva ločen po spolu. Kar pomeni, da mora veljati, da bo vsota vrednosti *Moških* in *Žensk* v letu *2011* enaka *1*, v prihodnjih letih pa bo vrednost vsote večja, saj se bo ujemala z vrednostmi na prejšnjem grafu. Iz grafa lahko razberemo, da je delež žensk v državi večji kot delež moške populacije ter da število enih in drugih raste iz leta v leto. Razlika med spoloma pa se manjša, saj delež moških raste hitreje kot delež žensk.
 
-```{r graf6, echo=FALSE, message=FALSE, fig.align='center'}
-# y = vsota vseh prebivalcev, ločeni po spolu
-plot(x = 2011:2019,
-     y = (prebivalstvo.real %>%
-            group_by(spol, leto) %>%
-            summarise_at(vars(delez), list(stevilo = sum)) %>%
-            filter(spol == "Moški"))$stevilo,
-     ylim=range(0.49, 0.51),
-     type= "b",
-     lwd = "2",
-     pch = 16,
-     col = 'lightblue',
-     xlab= "Leto",
-     ylab= "",
-     las = 1,
-     main = "Delež prebivalstva ločen po spolu"
-    )
-
-lines(x = 2011:2019,
-      y = (prebivalstvo.real %>%
-             group_by(spol, leto) %>%
-             summarise_at(vars(delez), list(stevilo = sum)) %>%
-             filter(spol == "Ženske"))$stevilo,
-      type= "b",
-      lwd = "2",
-      pch = 16,
-      col = 'lightcoral'
-     )
-
-legend("bottomright",
-       title="Spol",
-       legend = c("Moški", "Ženske"),
-       col = c("lightblue", "lightcoral"),
-       lwd = "2",
-       cex=0.8)
-
+```{r shiny_prebivalstvo_6, echo=FALSE, message=FALSE, fig.align='center'}
+shinyAppDir("shiny/prebivalstvo_6", options=list(width="100%", height=600))
 ```
 
 Oglejmo si spremembe v deležu prebivalstva s slovenskim državljanstvom glede na *2011*. Opazimo, da se delež prebivalcev s slovenskim državljanstvom manjša vse od leta *2012*.
 
-```{r graf7, echo=FALSE, message=FALSE, fig.align='center'}
-# y = vsota prebivalcev z slovenskim državljanstvom
-plot(x = 2011:2019,
-     y = (prebivalstvo.real %>%
-       group_by(leto, `drzavljanstvo == "Slovenija"`) %>%
-       summarise_at(vars(delez), list(stevilo = sum)) %>%
-         filter(`drzavljanstvo == "Slovenija"` == TRUE))$stevilo,
-     type= "b",
-     lwd = "2",
-     pch = 16,
-     col = 'lightblue',
-     xlab= "Leto",
-     ylab= "",
-     las = 1,
-     main = "Delež prebivalstva s slovenskim državljanstvom, glede na leto 2011"
-    )
+```{r shiny_prebivalstvo_7, echo=FALSE, message=FALSE, fig.align='center'}
+shinyAppDir("shiny/prebivalstvo_7", options=list(width="100%", height=600))
 ```
 
 Glede na ravno ogledani graf poglejmo še prikaz deleža prebivalstva s tujim državljanstvom glede na leto *2011*. Graf je seveda naraščajoč, kar bi lahko zaključili tudi iz tega, da se število prebivalcev glede na leto *2011* veča in da se število prebivalcev s slovenskim državljanstvom glede na leto *2011* manjša.
 
-```{r graf8, echo=FALSE, message=FALSE, fig.align='center'}
-# y = vsota tujcev
-plot(x = 2011:2019,
-     y = (prebivalstvo.real %>%
-            group_by(leto, `drzavljanstvo == "Slovenija"`) %>%
-            summarise_at(vars(delez), list(stevilo = sum)) %>%
-            filter(`drzavljanstvo == "Slovenija"` == FALSE))$stevilo,
-     type= "b",
-     lwd = "2",
-     pch = 16,
-     col = 'lightblue',
-     xlab= "Leto",
-     ylab= "",
-     las = 1,
-     main = "Delež prebivalstva s tujim državljanstvom, glede na leto 2011"
-)
+```{r shiny_prebivalstvo_8, echo=FALSE, message=FALSE, fig.align='center'}
+shinyAppDir("shiny/prebivalstvo_8", options=list(width="100%", height=600))
 ```
 
 ## Izjemno preprosta linearna regresija
 
 Pogosto radi napovedujemo prihodnost in to bomo poskusili storiti v tem razdelku, kjer bomo naredili nekaj primerov izjemno preproste linearne regresije.
 
+Na kratko regresija meri odvisnost dveh slučajnih spremenljivk. Iščemo krivuljo, ki se najboljše prilega podatkom. Delali bomo linearno regresijo, torej bomo iskali premico, ki se bo najbolje prilegala podatkom.
+
+Našo preprosto regresijo bomo oblikovali tako, da bomo za odvisno spremenljivko vzeli *stevilo*, torej število prebivalcev, za pojasnjevalno spremenljivko pa *leto*, seveda pa ne smemo pozabiti tudi na regresijsko konstanto. Za izračun vseh potrebnih vrednosti uporabimo v *R* vgrajeno funkcijo *lm*.
+
 ```{r shiny_regresija_1, echo=FALSE, fig.align='center'}
 shinyAppDir("shiny/regresija_1", options=list(width="100%", height=650))
 ```
+
+Prvi graf pod razdelkom *Vsi prebivalci* prikazuje podatke vseh prebivalcev skozi leta, nanj pa je še narisana premica, ki smo jo dobili s pomočjo linearne regresije. Pod grafom pa je izpis podatkov za interpretacijo. Iz podatkov lahko preberemo, da se podatkom najbolj prilega premica podana z enačbo $stevilo = -3789944 + 2904.65 leto$. Torej je napoved linearne regresije, da bo število prebivalcev Republike Slovenije rastlo. Poglejmo si še dva izmed izpisanih podatkov, to sta $p-value$ oziroma p vrednost in $R^2$. Podatka si bomo pogledali, ker nam povesta nekaj že sama po sebi, brez da bi izvajali kakršenkoli test. Za vsak koeficient si ogledamo $p$ vrednost, saj nam ta testira "nično hipotezo" oziroma to, ali je koeficient spremenljivke enak nič. To bi pomenilo, da ta pojasnjevalna spremenljivka nima vpliva na odvisno spremenljivko. Dovolj nizka vrednost (na primer $p-value < 0,05$) nam pove, da lahko zavrnemo ničelno hipotezo. Pri našem primeru je ```p-value: 2.883e-05``` torej lahko zavrnemo ničelno hipotezo in zaključimo, da pojasnjevalna spremenljivka *leto* najverjetneje vpliva na odvisno spremenljivko *stevilo*. Drugi omenjen podatke je $R^2$ ali multipli determinacijski koeficient, ki nam (poenostavljeno povedano) pove, koliko smo v tem primeru *stevilo* pojasnili s pojasnjevalo spremenljivko *leto* (če bi bila vrednost enaka $1$, bi model popolnoma pojasnil *stevilo*). Računsko povedano pa je $R^2$ razmerje med pojasnjeno vsoto kvadratov in skupno vsoto kvadratov. V našem primeru je ```R-squared: 0.9288```, kar je gledano na preprostost modela zelo dobro.
+
+Interpretirajmo naš rezultat: $stevilo = -3789944 + 2904.65 leto$.
+
+Če se *leto* poveča za $1$, se v povprečju, ceribus paribus(vse drugo ostane nespremenjeno) *število prebivalcev* poveča za $2904.65$ oseb.
+
+V drugem grafu pod razdelkom *Razdeljeno na spola* najdemo prikaz podatkov za vsak spol. Na grafu sta narisani tudi dve premici, ki se prilegata vsaka svojim podatkom. Pod grafom pa je ponovno izpis vrednosti linearne regresije.
+
+Moškim ustreza enačba $stevilo = -3742038 + 2365 leto$, ženskam pa $stevilo = -47906.1 + 539.8 leto$.
+
+Zanimivo si je ogledati tudi ostale vrednosti, na primer obe $p-value$ sta večji kot pri prejšnji regresiji ampak še vedno dovolj majhni $< 0,05$. Nižji sta tudi vrednosti $R^2$, pri moških ```0.8449``` ter pri ženskah ```0.6378```.
 
 ```{r shiny_regresija_2, echo=FALSE, fig.align='center'}
 shinyAppDir("shiny/regresija_2", options=list(width="100%", height=650))
 ```
 
+Drugi graf prikazuje podatke o prebivalcih s slovenskim državljanstvom, nanj pa je narisana tudi premica linearne regresije.
+
+$stevilo = 9136337.5 - 3562.2 leto$
+
+Če se *leto* poveča za $1$ se v povprečju, ceribus paribus, število prebivalcev s slovenskim državljanstvom zmanjša za $3562.2$. Torej ponovno vidimo padanje števila državljanov, ki imajo slovensko državljanstvo.
+
+Podobno kot prej je ponovno prikazan še graf, kjer so prebivalci s slovenskim državljanstvom razdeljeni po spolu.
+
+ - Moški: $stevilo = 3488259.9 - 1258.0 leto$
+ - Ženske: $stevilo = 5648077.6 - 2304.2 leto$
+ 
+Če se leto poveča za $1$ se v povprečju, ceribus paribus, število moških s slovenskim državljanstvom zmanjša za $1258.0$.
+Če se leto poveča za $1$ se v povprečju, ceribus paribus, število žensk s slovenskim državljanstvom zmanjša za $2304.2$.
+
+Opazimo, da tako moška kot ženska populacija oseb s slovenskim državljanstvom pada, je pa padanje števila žensk skoraj dvakrat večje kot padanje števila moških.
+
 ```{r shiny_regresija_3, echo=FALSE, fig.align='center'}
 shinyAppDir("shiny/regresija_3", options=list(width="100%", height=650))
 ```
+
+Zadnji graf v tem razdelku je popolnoma podoben prejšnjemu, le da sedaj opazujemo prebivalce, ki nimajo slovenskega državljanstva.
+
+ - skupaj: $stevilo = -1.293e+07 + 6467 leto$
+ - moški: $stevilo = -7230297.3 + 3622.8 leto$
+ - ženske: $stevilo = -5.696e+06 + 2844 leto$
+
+Če se leto poveča za $1$ se v povprečju, c.p., število prebivalcev brez slovenskega državljanstva poveča za $6467$.
+Če se leto poveča za $1$ se v povprečju, c.p., število moških prebivalcev brez slovenskega državljanstva poveča za $3622.8$.
+Če se leto poveča za $1$ se v povprečju, c.p., število ženskih prebivalk brez slovenskega državljanstva poveča za $2844$.
+
+Torej število prebivalcev brez slovenskega državljanstva se v Sloveniji povečuje, kjer opazimo, da se število moških raste hitreje kot število žensk.
+
+### Neumna napoved
+
+```{r shiny_napoved, echo=FALSE, fig.align='center'}
+shinyAppDir("shiny/napoved", options=list(width="100%", height=650))
+```
+
+Na vrsti je graf za šalo in brez prave vrednosti, prikazuje napoved državljanov v Sloveniji, kjer uporabljamo samo linearne regresije, ki smo jih izračunali v prejšnjem razdelku. Torej ko gledamo graf, se je treba zavedati, da sem uporabil najpreprostejšo možno linearno regresijo in ignoriral vse možne stvari, ki bi mi jih povedala kakšna družbena statistika in podobne vede. Že na hiter pomislek se lahko vprašamo, ali je druga, morda tretja generacija trenutnih prebivalcev brez slovenskega državljanstva še vedno tuja populacija in takoj vidimo nesmiselnost grafa, a ta je tukaj zato, ker je meni osebno zabaven(vedno je zabavno preveč poenostavljene stvari poslati naprej v čas in opazovati, kaj se zgodi).
+Kakorkoli, če ignoriramo njegovo nesmiselnost, nam graf napoveduje, da bo okoli leta $2200$ v Sloveniji približno enako število prebivalcev z slovenskim državljanstvom in brez njega. Za tem bo število slovenskih državljanov še naprej padalo in okoli leta $2570$ bodo v Republiki Sloveniji živeli samo prebivalci brez slovenskega državljanstva.
 
 ## Starostna piramida prebivalstva
 
@@ -321,13 +220,13 @@ shinyAppDir("shiny/piramida_1", options=list(width="100%", height=650))
 
 Vidimo, da tako imenovana starostna piramida, ko analiziramo podatke o prebivalstvu v Sloveniji ni ravno podobna piramidi. Na grafu lahko opazimo tudi razliko o pričakovani življenjski dobi med moškimi in ženskami, saj je delež ženske populacije v poznih letih večji kot delež moške populacije. Zanimivo je uporabiti drsnik skozi leta in biti ob tem pozoren na spodnji del piramide, saj je v letih od *2011* do *2015* spodnji del vedno bolj podoben začetku nove piramide, kar pa se obrne po letu *2016*, ko postane generacija med *0-4 let* manjša od generacije *5-9 let*.
 
-Poglejmo si podoben graf, v katerem pa opazujemo samo osebe s Slovenskim državljanstvom. Glede na to, da smo pri tortnih diagramih pokazali, da ima velika večina prebivalstva slovensko državljanstvo pričakujemo, da bo starostna piramida podobna prejšnji.
+Poglejmo si podoben graf, v katerem pa opazujemo samo osebe s slovenskim državljanstvom. Glede na to, da smo pri tortnih diagramih pokazali, da ima velika večina prebivalstva slovensko državljanstvo pričakujemo, da bo starostna piramida podobna prejšnji.
 
 ```{r shiny_piramida_2, echo=FALSE, fig.align='center'}
 shinyAppDir("shiny/piramida_2", options=list(width="100%", height=650))
 ```
 
-Kot smo pričakovali je starostna piramida izredno podobna prejšnji, saj ima večina prebivalstva Slovensko državljanstvo.
+Kot smo pričakovali je starostna piramida izredno podobna prejšnji, saj ima večina prebivalstva slovensko državljanstvo.
 
 Poglejmo si še starostno piramido prebivalcev, ki nimajo slovenskega državljanstva.
 
